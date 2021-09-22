@@ -99,9 +99,9 @@ export default function setUpFileCollections({
 
         // resizing image, adding fit, setting output format
         let nImage = sharp().resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true });
-        /// ignores an already formatted image
-        if (typeDefault != type) nImage = nImage.toFormat(format);
-        /// Listener
+        // ignores an already formatted image
+        if (typeDefault !== type) nImage = nImage.toFormat(format);
+        // Listener
         return nImage.on("error", (err) => {
           throw new ReactionError("error-sharp-resize-internal", err);
         });
