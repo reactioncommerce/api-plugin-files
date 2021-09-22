@@ -86,18 +86,25 @@ export default function setUpFileCollections({
 
         const { size, fit, format, type } = transform;
 
+        const {
+          document: {
+            original: { type: typeDefault }
+          }
+        } = fileRecord;
+
         // Need to update the content type and extension of the file info, too.
         // The new size gets set correctly automatically by FileCollections package.
         fileRecord.type(type, { store: name });
         fileRecord.extension(format, { store: name });
 
         // resizing image, adding fit, setting output format
-        return sharp()
-          .resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true })
-          .toFormat(format)
-          .on("error", (err) => {
-            throw new ReactionError("error-sharp-resize-internal", err);
-          });
+        let nImage = sharp().resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true });
+        /// ignores an already formatted image
+        if (typeDefault != type) nImage = nImage.toFormat(format);
+        /// Listener
+        return nImage.on("error", (err) => {
+          throw new ReactionError("error-sharp-resize-internal", err);
+        });
       }
     })
   );
